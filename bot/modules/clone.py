@@ -20,7 +20,7 @@ def cloneNode(update, context):
             sendMessage(res, context.bot, update)
             return
         if STOP_DUPLICATE:
-            LOGGER.info(f"Checking File/Folder if already in Drive...")
+            LOGGER.info('Checking File/Folder if already in Drive...')
             smsg, button = gd.drive_list(name)
             if smsg:
                 msg3 = "𝐅𝐢𝐥𝐞/𝐅𝐨𝐥𝐝𝐞𝐫 𝐢𝐬 𝐚𝐥𝐫𝐞𝐚𝐝𝐲 𝐚𝐯𝐚𝐢𝐥𝐚𝐛𝐥𝐞 𝐢𝐧 𝐃𝐫𝐢𝐯𝐞.\n𝐇𝐞𝐫𝐞 𝐀𝐫𝐞 𝐓𝐡𝐞 𝐑𝐞𝐬𝐮𝐥𝐭𝐬:"
@@ -63,7 +63,7 @@ def cloneNode(update, context):
         if uname is not None:
             cc = f'\n\ncc: {uname}'
             men = f'{uname} '
-        if button == "cancelled" or button == "":
+        if button in ["cancelled", ""]:
             sendMessage(men + result, context.bot, update)
         else:
             sendMarkup(result + cc, context.bot, update, button)

@@ -81,21 +81,21 @@ class qbittorrent:
                 if not is_file:
                     meta = sendMessage("Downloading Metadata...Please wait then you can select files or mirror torrent file if it have low seeders", listener.bot, listener.update)
                     while True:
-                            tor_info = self.client.torrents_info(torrent_hashes=self.ext_hash)
-                            if len(tor_info) == 0:
+                        tor_info = self.client.torrents_info(torrent_hashes=self.ext_hash)
+                        if len(tor_info) == 0:
+                            deleteMessage(listener.bot, meta)
+                            return False
+                        try:
+                            tor_info = tor_info[0]
+                            if tor_info.state in ["metaDL", "checkingResumeData"]:
+                                time.sleep(0.5)
+                            else:
+                                time.sleep(2)
                                 deleteMessage(listener.bot, meta)
-                                return False
-                            try:
-                                tor_info = tor_info[0]
-                                if tor_info.state == "metaDL" or tor_info.state == "checkingResumeData":
-                                    time.sleep(0.5)
-                                else:
-                                    time.sleep(2)
-                                    deleteMessage(listener.bot, meta)
-                                    break
-                            except:
-                                deleteMessage(listener.bot, meta)
-                                return False
+                                break
+                        except:
+                            deleteMessage(listener.bot, meta)
+                            return False
                 self.client.torrents_pause(torrent_hashes=self.ext_hash)
                 for n in str(self.ext_hash):
                     if n.isdigit():
@@ -213,11 +213,11 @@ def get_hash_magnet(mgt):
 
     qs = parse_qs(query)
     v = qs.get('xt', None)
-    
-    if v == None or v == []:
+
+    if v is None or v == []:
         LOGGER.error('Invalid magnet URI: no "xt" query parameter.')
         return False
-        
+
     v = v[0]
     if not v.startswith('urn:btih:'):
         LOGGER.error('Invalid magnet URI: "xt" value not valid for BitTorrent.')

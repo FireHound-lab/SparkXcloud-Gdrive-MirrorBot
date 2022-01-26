@@ -107,7 +107,7 @@ class MegaAppListener(MegaListener):
         errStr = error.toString()
         LOGGER.info(f'Mega download error in file {transfer} {filen}: {error}')
 
-        if state == 1 or state == 4:
+        if state in [1, 4]:
             # Sometimes MEGA (offical client) can't stream a node either and raises a temp failed error.
             # Don't break the transfer queue if transfer's in queued (1) or retrying (4) state [causes seg fault]
             return
@@ -165,7 +165,7 @@ class MegaDownloadHelper:
         if mega_listener.error is not None:
             return listener.onDownloadError(str(mega_listener.error))
         if STOP_DUPLICATE:
-            LOGGER.info(f'Checking File/Folder if already in Drive')
+            LOGGER.info('Checking File/Folder if already in Drive')
             mname = node.getName()
             if listener.isTar:
                 mname = mname + ".tar"
@@ -187,8 +187,9 @@ class MegaDownloadHelper:
             else:
                 is_tar_ext = False
                 msg3 = f'Failed, Mega limit is {MEGA_LIMIT}.\nYour File/Folder size is {get_readable_file_size(api.getSize(node))}.'
-            result = check_limit(size, MEGA_LIMIT, TAR_UNZIP_LIMIT, is_tar_ext)
-            if result:
+            if result := check_limit(
+                size, MEGA_LIMIT, TAR_UNZIP_LIMIT, is_tar_ext
+            ):
                 sendMessage(msg3, listener.bot, listener.update)
                 executor.continue_event.set()
                 return
